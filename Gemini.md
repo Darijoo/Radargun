@@ -35,17 +35,17 @@
 - **Battery Sense**: `BAT+` -> 100kΩ -> ESP32 `BAT_SENSE_ADC` -> 100kΩ -> `GND`.
 
 ### ESP32 Core Block
-- **Power**: `3V3` to Pin 2, `GND` to Pins 1, 40, 41. Decoupling: 10µF + 0.1µF.
-- **Reset (EN)**: Pin 3 pulled up to `3V3` via 10kΩ, 1µF to `GND`, Reset Button to `GND`.
-- **Boot (GPIO0)**: Pin 27 pulled up to `3V3` via 10kΩ, Boot Button to `GND`.
-- **Programming (UART)**: 4-pin header (`GND`, `3V3`, `TXD0` on Pin 37, `RXD0` on Pin 38).
+- **Power**: `3V3` to `3V3` pin, `GND` to all `GND` pins. Decoupling: 10µF + 0.1µF.
+- **Reset (EN)**: `EN` pin pulled up to `3V3` via 10kΩ, 1µF to `GND`, Reset Button to `GND`.
+- **Boot (GPIO0)**: `IO0` pin pulled up to `3V3` via 10kΩ, Boot Button to `GND`.
+- **Programming (UART)**: 4-pin header (`GND`, `3V3`, `TX_PROG` to `IO43` / `TXD0`, `RX_PROG` to `IO44` / `RXD0`).
 - **Peripherals**:
-  - `HB100_ADC`: Pin 8 (GPIO6 / ADC1_CH5)
-  - `BAT_SENSE_ADC`: Pin 9 (GPIO7 / ADC1_CH6)
-  - `HB100_EN`: Pin 10 (GPIO8)
-  - `TM1637_CLK`: Pin 6 (GPIO4)
-  - `TM1637_DIO`: Pin 7 (GPIO5)
-  - `ACTION_BTN`: Pin 11 (GPIO9)
+  - `HB100_ADC`: `IO6` (ADC1_CH5)
+  - `BAT_SENSE_ADC`: `IO7` (ADC1_CH6)
+  - `HB100_EN`: `IO8`
+  - `TM1637_CLK`: `IO4`
+  - `TM1637_DIO`: `IO5`
+  - `ACTION_BTN`: `IO9`
 
 ## Current Task Status
 - Phase 1: Schematic Capture in KiCad.
