@@ -14,6 +14,12 @@
   - 1x 4-pin Male Header (UART Programming)
 - **Sensor**: HB100 Microwave Doppler Sensor (10.525 GHz)
 - **Analog Front-End**: LM358 Op-Amp (2-stage active band-pass filter, ~10000x gain, 2.5V virtual ground)
+  - 3x 100kΩ Resistors (Virtual ground and ADC bias)
+  - 2x 10kΩ Resistors (Input stage)
+  - 2x 1MΩ Resistors (Feedback gain)
+  - 2x 47pF Capacitors (Low-pass filter)
+  - 2x 1µF Capacitors (AC coupling / High-pass)
+  - 2x 10µF Capacitors (Virtual ground decoupling & ADC AC coupling)
 - **Power Management**:
   - 3.7V Li-Po Battery
   - TP4056 Module (Pre-made module with USB-C, TP4056 + DW01A protection)
@@ -47,10 +53,17 @@
   - `TM1637_DIO`: `IO5`
   - `ACTION_BTN`: `IO9`
 
+### Analog Front-End (LM358)
+- **Power**: Pin 8 (`VCC`) to `5V_BOOST`, Pin 4 (`GND`) to `GND`.
+- **Virtual Ground (V_REF)**: 2x 100kΩ voltage divider from `5V_BOOST` to `GND`, 10µF to `GND`.
+- **Stage 1**: HB100 `IF` -> 1µF -> 10kΩ -> Pin 2. `V_REF` to Pin 3. 1MΩ and 47pF from Pin 1 to Pin 2.
+- **Stage 2**: Pin 1 -> 1µF -> 10kΩ -> Pin 6. `V_REF` to Pin 5. 1MΩ and 47pF from Pin 7 to Pin 6.
+- **ADC Output**: Pin 7 -> 10µF -> `HB100_ADC` net. 100kΩ from `HB100_ADC` to `3V3`, 100kΩ to `GND`.
+
 ## Current Task Status
 - Phase 1: Schematic Capture in KiCad.
-- Power Management and ESP32 Core net connections finalized and documented.
+- Power Management, ESP32 Core, and Analog Front-End connections finalized and documented.
 - Project Git repository initialized and pushed to GitHub.
 
 ## Outstanding Issues
-- Need to draft KiCad net connections for the remaining blocks (LM358 Analog Front-End, TM1637 Display).
+- Need to draft KiCad net connections for the remaining block (TM1637 Display).
