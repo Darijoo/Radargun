@@ -1,0 +1,46 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# KiCad
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.sch-bak
+*-backups/
+fp-info-cache
+_autosave-*
+*.tmp
+*.lck
+
+# Firmware (PlatformIO / ESP-IDF)
+.pio/
+build/
+*.bin
+*.elf
+*.map
+sdkconfig
+sdkconfig.old
+dependencies.lock
+
+# Angular / Web Dashboard
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+npm-debug.log
+yarn-error.log
