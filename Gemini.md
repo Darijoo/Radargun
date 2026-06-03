@@ -7,6 +7,11 @@
 
 ## Component Bill of Materials (BOM)
 - **Microcontroller**: ESP32-S3-WROOM-1 (Bare module, surface mount)
+  - 1x 10µF, 1x 0.1µF Ceramic Capacitors (Decoupling)
+  - 2x 10kΩ Resistors (Pull-ups for EN and BOOT)
+  - 1x 1µF Capacitor (EN delay)
+  - 2x Tactile Push Buttons (BOOT and RESET)
+  - 1x 4-pin Male Header (UART Programming)
 - **Sensor**: HB100 Microwave Doppler Sensor (10.525 GHz)
 - **Analog Front-End**: LM358 Op-Amp (2-stage active band-pass filter, ~10000x gain, 2.5V virtual ground)
 - **Power Management**:
@@ -29,10 +34,23 @@
   - 2N7002 (N-Ch): Source = `GND`, Gate = ESP32 `HB100_EN` pin.
 - **Battery Sense**: `BAT+` -> 100kΩ -> ESP32 `BAT_SENSE_ADC` -> 100kΩ -> `GND`.
 
+### ESP32 Core Block
+- **Power**: `3V3` to Pin 2, `GND` to Pins 1, 40, 41. Decoupling: 10µF + 0.1µF.
+- **Reset (EN)**: Pin 3 pulled up to `3V3` via 10kΩ, 1µF to `GND`, Reset Button to `GND`.
+- **Boot (GPIO0)**: Pin 27 pulled up to `3V3` via 10kΩ, Boot Button to `GND`.
+- **Programming (UART)**: 4-pin header (`GND`, `3V3`, `TXD0` on Pin 37, `RXD0` on Pin 38).
+- **Peripherals**:
+  - `HB100_ADC`: Pin 8 (GPIO6 / ADC1_CH5)
+  - `BAT_SENSE_ADC`: Pin 9 (GPIO7 / ADC1_CH6)
+  - `HB100_EN`: Pin 10 (GPIO8)
+  - `TM1637_CLK`: Pin 6 (GPIO4)
+  - `TM1637_DIO`: Pin 7 (GPIO5)
+  - `ACTION_BTN`: Pin 11 (GPIO9)
+
 ## Current Task Status
 - Phase 1: Schematic Capture in KiCad.
-- Power Management block (Block 1) net connections finalized and documented.
+- Power Management and ESP32 Core net connections finalized and documented.
 - Project Git repository initialized and pushed to GitHub.
 
 ## Outstanding Issues
-- Need to draft KiCad net connections for the remaining blocks (ESP32, LM358 Analog Front-End, TM1637 Display).
+- Need to draft KiCad net connections for the remaining blocks (LM358 Analog Front-End, TM1637 Display).
