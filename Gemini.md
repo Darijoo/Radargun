@@ -60,10 +60,13 @@
 - **Stage 2**: Pin 1 -> 1µF -> 10kΩ -> Pin 6. `V_REF` to Pin 5. 1MΩ and 47pF from Pin 7 to Pin 6.
 - **ADC Output**: Pin 7 -> 10µF -> `HB100_ADC` net. 100kΩ from `HB100_ADC` to `3V3`, 100kΩ to `GND`.
 
+### User Interface Block
+- **TM1637 Display**: `VCC` to `3V3`, `GND` to `GND`, `CLK` to `TM1637_CLK` (IO4), `DIO` to `TM1637_DIO` (IO5).
+- **Action Button**: One side to `ACTION_BTN` (IO9), other side to `GND`.
+
 ## Current Task Status
-- Phase 1: Schematic Capture in KiCad.
-- Power Management, ESP32 Core, and Analog Front-End connections finalized and documented.
-- Project Git repository initialized and pushed to GitHub.
+- Phase 1: Schematic Capture in KiCad is **COMPLETE**.
+- All schematic blocks (Power, ESP32, Analog Front-End, User Interface) are finalized and documented.
 
 ## Outstanding Issues
-- Need to draft KiCad net connections for the remaining block (TM1637 Display).
+- Next Phase: PCB Layout. Need to assign footprints, place components, and route the board in KiCad.
