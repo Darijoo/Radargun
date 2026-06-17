@@ -136,38 +136,54 @@
 - **Mode Switch**: Pin 2 (Common) to `MODE_SEL` (IO10), Pin 1 to `GND`, Pin 3 to No Connect.
 
 ## Known Issues & Required Schematic Changes
-These were identified during a full schematic audit and MUST be addressed before finalizing the PCB layout.
+These were identified during a full schematic audit. All critical items are now RESOLVED.
 
-### MUST FIX — LED Current-Limiting Resistors
-- **R17 (Blue Status LED)**: Currently 1kΩ. Blue LEDs have ~3.0-3.2V forward voltage. At 3.3V GPIO: I = (3.3 - 3.0) / 1000 = 0.3mA → nearly invisible. **Change R17 to 100Ω–220Ω** for ~1-1.5mA (visible for high-efficiency LED).
-- **R16 (Red Power LED)**: Currently 1kΩ. Red LEDs have ~2.0V Vf. At 3.3V: I = 1.3mA → dim but functional. **Consider changing R16 to 330Ω–470Ω** for 2.8-3.9mA if brighter indicator is desired.
+### ✅ FIXED — LED Current-Limiting Resistors
+- **R17 (Blue Status LED)**: Changed from 1kΩ to **220Ω**. At 3.3V GPIO: I = (3.3 - 3.0) / 220 ≈ 1.4mA → visible for high-efficiency LED.
+- **R16 (Red Power LED)**: Changed from 1kΩ to **470Ω**. At 3.3V: I = (3.3 - 2.0) / 470 ≈ 2.8mA → good visibility.
 
-### SHOULD VERIFY — HB100 Decoupling Caps Placement
-- C12 (10µF) and C13 (0.1µF) must be on the **switched** `HB100_VCC` net (after the AO3401A MOSFET), NOT on the `5V_BOOST` rail before the switch. Verify in schematic that they connect to the correct net. On PCB, place these as physically close to the HB100 connector (J4) as possible.
+### ✅ VERIFIED — HB100 Decoupling Caps Placement
+- C12 (10µF) and C13 (0.1µF) confirmed on the **switched** `HB100_VCC` net (after the AO3401A MOSFET). On PCB, place these as physically close to the HB100 connector (J4) as possible.
 
-### RECOMMENDED — External Pull-Up Resistors on Button/Switch Inputs
-- `ACTION_BTN` (IO9) and `MODE_SEL` (IO10) currently rely on ESP32 internal pull-ups (~45kΩ). The HB100 sensor emits 10.525 GHz which can couple noise into nearby traces. Consider adding **10kΩ external pull-up resistors** to `3V3` on IO9 and IO10 for better noise immunity.
+### ✅ DONE — External Pull-Up Resistors on Button/Switch Inputs
+- `ACTION_BTN` (IO9) and `MODE_SEL` (IO10) have external pull-ups added.
 
-### RECOMMENDED — AO3401A Source/Drain Orientation
-- Visually verify in KiCad that Q1 (AO3401A) has: Source → `5V_BOOST`, Drain → `HB100_VCC`. The KiCad symbol pinout is: Pin 1 = Gate, Pin 2 = Source, Pin 3 = Drain.
+### ✅ VERIFIED — AO3401A Source/Drain Orientation
+- Q1 (AO3401A) confirmed: Source → `5V_BOOST`, Drain → `HB100_VCC`. Gate pull-up R3 (10kΩ) connected.
 
 ## Current Task Status
-- Phase 1: Schematic Capture in KiCad is **MOSTLY COMPLETE** — needs the fixes listed in "Known Issues" above.
-- Full schematic audit has been performed. Circuit topology and component values are verified correct (MT3608 feedback divider, battery sense divider, LM358 filter stages, ESP32 boot/reset circuitry).
-- **All footprints are now ASSIGNED** — all 27 components have footprints in the schematic. PCB layout can begin.
+- Phase 1: Schematic Capture in KiCad is **COMPLETE**. All fixes applied, all footprints assigned.
+- **PCB Layout is IN PROGRESS** — netlist imported, footprints loaded, ready for placement and routing.
 
 ## Outstanding Issues
-1. Fix LED resistor values (R16, R17) in schematic — change to 470Ω (Red) and 220Ω (Blue).
-2. Verify HB100 decoupling cap net placement (C12, C13).
-3. (Optional) Add external pull-ups on IO9, IO10.
-4. Run KiCad ERC (Electrical Rules Check) to confirm no errors.
-5. Begin PCB Layout: define board outline, place components, route traces.
+1. ~~Fix LED resistor values (R16, R17)~~ ✅ Done
+2. ~~Verify HB100 decoupling cap net placement (C12, C13)~~ ✅ Done
+3. ~~Add external pull-ups on IO9, IO10~~ ✅ Done
+4. Run KiCad DRC (Design Rules Check) after routing.
+5. **PCB Layout**: define board outline, place components, route traces, add copper zones.
 
-## PCB Layout Guidelines (For When Layout Begins)
-- **Keep HB100 analog signal path short**: Place LM358 (U4) and its surrounding passives close to the HB100 connector (J4). Keep `HB100_IF` and `HB100_ADC` traces short and away from digital signals.
-- **Star ground or ground plane**: Use a solid ground plane on one layer. Keep analog ground and digital ground meeting at a single point if possible.
-- **MT3608 layout is critical**: Keep L1, D1, and input/output caps (C1, C3) physically close to U3. The SW pin trace should be short and wide. Route the feedback divider (R1, R2) close to the FB pin, away from the inductor.
-- **Decoupling caps close to IC pins**: All decoupling capacitors should be placed as close as possible to their respective IC power pins.
-- **Antenna keep-out**: The ESP32-S3-WROOM-1 module has an on-board PCB antenna. Keep a ground-plane clear zone under and around the antenna area per the Espressif datasheet recommendations.
-- **Battery connector and power switch**: Place near the board edge for easy access.
-- **Board size target**: Keep compact for handheld use — aim for ~60-80mm × 40-50mm.
+## PCB Layout Guidelines
+### Board Setup
+- **Board size target**: ~60-80mm × 40-50mm for handheld use.
+- **Layer stackup**: 2-layer board. F.Cu (signal + components), B.Cu (ground plane + some routing).
+- **Trace widths**: Signal traces 0.25mm, Power traces (BAT+, 5V_BOOST, 3V3, GND) 0.5mm–1.0mm.
+- **Via size**: 0.8mm outer diameter, 0.4mm drill.
+- **Clearance**: 0.2mm minimum between traces/pads.
+
+### Component Placement Strategy (Place in This Order)
+1. **ESP32-S3-WROOM-1 (U1)**: Place centrally or near one edge. The antenna end MUST extend to or overhang the board edge. Keep a ground-plane clear zone under and around the antenna area (no copper on any layer under the antenna).
+2. **Connectors at edges**: BT1 (battery JST), SW4 (power switch), J1 (UART), J4 (HB100), J2 (TM1637 display) — all placed at board edges for physical access.
+3. **MT3608 Boost cluster (U3)**: Place L1, D1, R1, R2, and input/output caps physically close to U3. The SW pin trace must be short and wide. Keep this cluster away from the analog signal path.
+4. **AP2112K LDO (U2)**: Place near the ESP32 with C1, C2 close to its VIN/VOUT pins.
+5. **Analog Front-End (U4 LM358)**: Place U4 and its passives (R8-R15, C6-C11) close to J4 (HB100 connector). Keep the entire analog signal path (HB100_IF → filter stages → HB100_ADC) short and away from switching power traces and digital signals.
+6. **HB100 Power Switch (Q1, Q2, R3)**: Place between the 5V_BOOST rail and J4.
+7. **User Interface**: SW3 (action button), SW5 (mode switch), D2 (power LED), D3 (status LED) — place where accessible/visible in your enclosure.
+8. **Mounting holes (H1-H4)**: Place at corners, ~3mm from board edges.
+
+### Critical Layout Rules
+- **Analog path isolation**: Route `HB100_IF` and `HB100_ADC` traces away from digital signals and power switching. Use ground plane as a shield.
+- **MT3608 switching loop**: The loop formed by U3 SW pin → L1 → D1 → output cap must be as tight (short) as possible to minimize EMI. The FB divider (R1, R2) should be routed close to the FB pin, far from the inductor.
+- **Decoupling cap placement**: Every IC's decoupling caps must be placed as close as physically possible to the power pins.
+- **ESP32 antenna keep-out**: No copper pour, traces, or components under the ESP32 antenna area. The antenna should extend to or past the board edge.
+- **Ground plane**: Fill B.Cu with a solid ground plane copper zone. This provides low-impedance return paths and shielding. Add vias near IC ground pins to connect to the ground plane.
+- **Thermal relief on ground pads**: Use thermal relief (spoked connection) on pads connecting to the ground plane — this makes hand soldering much easier.
